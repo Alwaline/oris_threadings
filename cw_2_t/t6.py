@@ -19,10 +19,11 @@ def change_balance(s):
 
             print(f"{m} {s} деняг")
 
-            time.sleep(1)
 
             print(f"Теперь на балансе {balance} деняг")
 
+            time.sleep(1)
+            
 
 def main():
     threadings = []
