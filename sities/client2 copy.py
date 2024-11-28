@@ -28,6 +28,10 @@ def check_sity(sity):
     use_sities.append(sity)
     return True
 
+def add_city(data: str):
+    if data.find(':') >= 0:
+        use_sities.append(data[data.find(':')+1:])
+
 def one_round(sock):
     message = "Введите сообщение (или 'exit' для выхода):"
     while message != 'exit':
@@ -35,20 +39,24 @@ def one_round(sock):
         data = sock.recv(1024)
         if data:
             print("\n", data.decode(), "\n")
+            add_city(data.decode())
 
         timeout = threading.Timer(60.0, lose, (sock,))
         timeout.start()
         
-        message = input().lower().strip()
-        if timeout.is_alive():
-            if message.lower() == 'exit':
+        try:
+            message = input().lower().strip()
+            if timeout.is_alive():
+                if message.lower() == 'exit':
+                    break
+                while not check_sity(message):
+                    message = input().lower().strip()
+                sock.send(message.encode())
+                timeout.cancel()
+            else:
                 break
-            if not check_sity(message):
-                continue
-            sock.send(message.encode())
-            timeout.cancel()
-        else:
-            break
+        except:
+            pass
 
 
     sock.close()
